@@ -3,7 +3,7 @@
 # Benjamin Chodroff benjamin.chodroff@gmail.com
 
 import pyaudio
-from numpy import zeros,linspace,short,fromstring,hstack,transpose,log
+from numpy import zeros,linspace,short,frombuffer,hstack,transpose,log
 from scipy import fft
 from time import sleep
 
@@ -48,11 +48,11 @@ alarm=False
 
 while True:
     while _stream.get_read_available()< NUM_SAMPLES: sleep(0.01)
-    audio_data  = fromstring(_stream.read(
+    audio_data  = frombuffer(_stream.read(
          _stream.get_read_available()), dtype=short)[-NUM_SAMPLES:]
     # Each data point is a signed 16 bit number, so we can normalize by dividing 32*1024
     normalized_data = audio_data / 32768.0
-    intensity = abs(fft(normalized_data))[:int(NUM_SAMPLES/2)]
+    intensity = abs(fft.fft(normalized_data))[:int(NUM_SAMPLES/2)]
     frequencies = linspace(0.0, float(SAMPLING_RATE)/2, num=int(NUM_SAMPLES/2))
     if frequencyoutput:
         which = intensity[1:].argmax()+1
