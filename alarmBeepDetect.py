@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # This program is for educational purposes only and should never be used in any production or safety system
 # Benjamin Chodroff benjamin.chodroff@gmail.com
 
@@ -52,8 +52,8 @@ while True:
          _stream.get_read_available()), dtype=short)[-NUM_SAMPLES:]
     # Each data point is a signed 16 bit number, so we can normalize by dividing 32*1024
     normalized_data = audio_data / 32768.0
-    intensity = abs(fft(normalized_data))[:NUM_SAMPLES/2]
-    frequencies = linspace(0.0, float(SAMPLING_RATE)/2, num=NUM_SAMPLES/2)
+    intensity = abs(fft(normalized_data))[:int(NUM_SAMPLES/2)]
+    frequencies = linspace(0.0, float(SAMPLING_RATE)/2, num=int(NUM_SAMPLES/2))
     if frequencyoutput:
         which = intensity[1:].argmax()+1
         # use quadratic interpolation around the max
@@ -66,34 +66,34 @@ while True:
             thefreq = which*SAMPLING_RATE/NUM_SAMPLES
     if max(intensity[(frequencies < TONE+BANDWIDTH) & (frequencies > TONE-BANDWIDTH )]) > max(intensity[(frequencies < TONE-1000) & (frequencies > TONE-2000)]) + SENSITIVITY:
         if frequencyoutput:
-            print "\t\t\t\tfreq=",thefreq
+            print("\t\t\t\tfreq=",thefreq)
         blipcount+=1
         resetcount=0
-        if debug: print "\t\tBlip",blipcount
+        if debug: print("\t\tBlip",blipcount)
         if (blipcount>=beeplength):
             blipcount=0
             resetcount=0
             beepcount+=1
-            if debug: print "\tBeep",beepcount
+            if debug: print("\tBeep",beepcount)
             if (beepcount>=alarmlength):
                 clearcount=0
                 alarm=True
-                print "Alarm!"
+                print("Alarm!")
                 beepcount=0
     else:
         if frequencyoutput:
-            print "\t\t\t\tfreq="
+            print("\t\t\t\tfreq=")
         blipcount=0
         resetcount+=1
-        if debug: print "\t\t\treset",resetcount
+        if debug: print("\t\t\treset",resetcount)
         if (resetcount>=resetlength):
             resetcount=0
             beepcount=0
             if alarm:
                 clearcount+=1
-                if debug: print "\t\tclear",clearcount
+                if debug: print("\t\tclear",clearcount)
                 if clearcount>=clearlength:
                     clearcount=0
-                    print "Cleared alarm!"
+                    print("Cleared alarm!")
                     alarm=False
     sleep(0.01)
